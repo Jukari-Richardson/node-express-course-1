@@ -1,14 +1,14 @@
 const http = require("http");
-var StringDecoder = require("string_decoder").StringDecoder;
+const StringDecoder = require("string_decoder").StringDecoder;
 
 const getBody = (req, callback) => {
-  const decode = new StringDecoder("utf-8");
+  const decoder = new StringDecoder("utf-8");
   let body = "";
   req.on("data", function (data) {
-    body += decode.write(data);
+    body += decoder.write(data);
   });
   req.on("end", function () {
-    body += decode.end();
+    body += decoder.end();
     const body1 = decodeURI(body);
     const bodyArray = body1.split("&");
     const resultHash = {};
@@ -20,45 +20,50 @@ const getBody = (req, callback) => {
   });
 };
 
-// here, you could declare one or more variables to store what comes back from the form.
-let item = "Enter something below.";
+let randomNumber = Math.floor(Math.random() * 100) + 1;
+let message = "";
 
-// here, you can change the form below to modify the input fields and what is displayed.
-// This is just ordinary html with string interpolation.
-const form = () => {
+const form = (message) => {
   return `
-  <body>
-  <p>${item}</p>
-  <form method="POST">
-  <input name="item"></input>
-  <button type="submit">Submit</button>
-  </form>
-  </body>
+    <body>
+      <h1>Number Guessing Game</h1>
+      <p>${message}</p>
+      <form method="POST">
+        <input type="number" name="guess" min="1" max="100" required></input>
+        <button type="submit">Submit</button>
+      </form>
+    </body>
   `;
 };
 
 const server = http.createServer((req, res) => {
-  console.log("req.method is ", req.method);
-  console.log("req.url is ", req.url);
   if (req.method === "POST") {
     getBody(req, (body) => {
-      console.log("The body of the post is ", body);
-      // here, you can add your own logic
-      if (body["item"]) {
-        item = body["item"];
+      const guess = parseInt(body["guess"]);
+      if (isNaN(guess)) {
+        message = "Invalid guess. Please enter a number between 1 and 100.";
       } else {
-        item = "Nothing was entered.";
+        if (guess === randomNumber) {
+          message = "Congratulations! You guessed the correct number.";
+        } else if (guess < randomNumber) {
+          message = "Too low. Try a higher number.";
+        } else {
+          message = "Too high. Try a lower number.";
+        }
       }
-      // Your code changes would end here
       res.writeHead(303, {
         Location: "/",
       });
       res.end();
     });
   } else {
-    res.end(form());
+    res.end(form(message));
   }
 });
+
+server.on('request', (req) => {
+  console.log("event received: ", req.method, req.url)
+  }),
 
 server.listen(3000);
 console.log("The server is listening on port 3000.");
