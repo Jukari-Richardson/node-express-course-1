@@ -1,8 +1,9 @@
 //import express module
-const express = require('express')
-const logger = require('./logger')
+const express = require('express');
+const logger = require('./logger');
 const peopleRouter = require('./routes/people');
 const productRouter = require('./routes/product');
+const { getProduct } = require('./controllers/product');
 
  //call express to be used 
 const app = express();
@@ -25,7 +26,9 @@ app.use(express.json());
 //people router 
 app.use('/api/v1/people', peopleRouter);
 //products router 
-app.use('/api/v1/product', productRouter);
+app.use('/api/v1/products', productRouter);
+
+// app.get('/api/v1/products', getProduct);
 
 app.all("*", (req, res) => {
     res.status(404).send("404");

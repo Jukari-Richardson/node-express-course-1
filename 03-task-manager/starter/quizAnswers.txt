@@ -1,0 +1,13 @@
+1. Middleware serves as the function methods which allow for communication between API's and servers by processing HTTP requests
+
+2.CRUD is the acronym used for communicating the dirrent types of HTTP requests:
+Create 
+Read 
+Update
+Delete
+
+3.
+a.We are able to access the .env file by first installing the dotenv dependency and then importing the dotenv file into our app.js file so that any and all variables housed in the file become readable 
+
+
+b. We are able to protect the contents of the env file by using importing it into the gitignore file which will keep the data secret 
